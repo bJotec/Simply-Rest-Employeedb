@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -33,7 +34,7 @@ public class EmployeeDao implements IEmployeeDao {
     }
 
     @Override
-    public void addEmployee(Employee employee) {
+    public Employee addEmployee(Employee employee) {
         Session session = this.sessionFactory.openSession();
         Transaction tx = null;
         try {
@@ -47,8 +48,8 @@ public class EmployeeDao implements IEmployeeDao {
         } finally {
             session.close();
         }
+        return employee;
     }
-
 
     @Override
     public void updateEmployee(Employee employee) {
@@ -86,4 +87,12 @@ public class EmployeeDao implements IEmployeeDao {
         }
     }
 
+    @Override
+    public List<Employee> getEmployeeList() {
+        Session session = this.sessionFactory.openSession();
+        Query<Employee> query = session.createQuery("FROM com.mastery.java.task.dto.Employee");
+        List<Employee> employees = query.getResultList();
+        session.close();
+        return employees;
+    }
 }

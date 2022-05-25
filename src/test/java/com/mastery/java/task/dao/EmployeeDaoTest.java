@@ -1,18 +1,13 @@
 package com.mastery.java.task.dao;
 
-import com.mastery.java.task.HibernateUtil;
 import com.mastery.java.task.dto.Employee;
-import com.mysql.cj.Session;
-import com.mysql.cj.xdevapi.SessionFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import java.util.List;
+import java.util.Optional;
 
 public class EmployeeDaoTest {
 
@@ -22,14 +17,15 @@ public class EmployeeDaoTest {
 
     @Test
     @Rollback(value = false)
-    public void saveEmployeeTest(){
+    public void saveEmployeeTest() {
 
-        Employee employee = Employee.builder()
-                .firstName("Ramesh")
-                .lastName("Fadatare")
-                .departmentId(55)
-                .jobTitle("Testowy jobTitle")
-                .build();
+        Employee employee = new Employee();
+        employee.setId(10);
+        employee.setFirstName("Adam");
+        employee.setLastName("Malinowski");
+        employee.setDepartmentId(55);
+        employee.setJobTitle("Testowy jobTitle");
+        employee.setGender(Employee.Gender.MALE);
 
         employeeDao.addEmployee(employee);
 
@@ -37,11 +33,50 @@ public class EmployeeDaoTest {
     }
 
     @Test
-    public void getEmployeeTest(){
+    public void getEmployeeTest() {
+
+        Employee employee = employeeDao.getEmployeeById(1).get();
+        Assertions.assertThat(employee.getId()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void getListOfEmployeesTest() {
+
+        List<Employee> employees = employeeDao.getEmployeeList();
+
+        Assertions.assertThat(employees.size()).isGreaterThan(0);
+
+    }
+
+    @Test
+    @Rollback(value = false)
+    public void updateEmployeeTest() {
 
         Employee employee = employeeDao.getEmployeeById(1).get();
 
-        Assertions.assertThat(employee.getId()).isEqualTo(1);
+        employee.setFirstName("ZMIANAIMIENIA");
 
+        Employee employeeUpdated = employeeDao.addEmployee(employee);
+
+        Assertions.assertThat(employeeUpdated.getFirstName()).isEqualTo("ZMIANAIMIENIA");
+
+    }
+
+    @Test
+    @Rollback(value = false)
+    public void deleteEmployeeTest() {
+
+        Employee employee2 = null;
+
+        employeeDao.deleteEmployee(3);
+
+        Optional<Employee> employeeBox = employeeDao.getEmployeeById(3);
+
+        if (employeeBox.isPresent()) {
+            employee2 = employeeBox.get();
+        }
+
+        Assertions.assertThat(employee2).isNull();
     }
 }
