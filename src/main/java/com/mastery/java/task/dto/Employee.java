@@ -1,12 +1,14 @@
 package com.mastery.java.task.dto;
 
+import lombok.Builder;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-
+@Builder
 @Entity(name = "employee")
 public class Employee {
     @Id
@@ -30,6 +32,8 @@ public class Employee {
 
     public Employee() {
     }
+
+
 
     public int getId() {
         return id;
